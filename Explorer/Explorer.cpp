@@ -7,38 +7,37 @@
 #include <set>
 using namespace std;
 
-template<typename T>
-bool isVectorContain(vector<T> vec, T val)
-{
-    return !vec.empty() && find(vec.begin(), vec.end(), val) != vec.end();
-}
-
-void Permute(vector<int>* rooms, int n_room, int& res, vector<int> pass, int focused_room, int recent_list)
+void Permute(vector<int>* rooms, int n_room, int& res, map<int,int> pass,int pass_size, int focused_room, int recent_list)
 {
     vector<int> room = *(rooms+focused_room);
-    if (!isVectorContain<int>(pass,focused_room)) {
-        pass.push_back(focused_room);
+    if (pass_size == 0 || pass.find(focused_room) == pass.end()) {
+        pass[focused_room] = pass_size;
+        pass_size++;
     }
-    if (pass.size() >= n_room) {
+    if (pass_size >= n_room) {
         res++;
         return;
     }
     if (room.size() > 1) {
         int isFail = true;
         for (int i = 0;i < room.size();i++) {
-            int foo = distance(pass.begin(), find(pass.begin(), pass.end(), room[i])) - 1;
             if ((recent_list == -1 || room[i] != pass[recent_list]) 
-                && !isVectorContain<int>(pass, room[i])) {
-                    Permute(rooms, n_room, res, pass, room[i], foo);
+                && pass.find(room[i]) == pass.end()) {
+                Permute(rooms, n_room, res, pass,pass_size, room[i], pass[focused_room]);
                 isFail = false;
             }
         }
         if (isFail)
         {
-            Permute(rooms, n_room, res, pass, pass[recent_list], recent_list - 1);
+            int index;
+            for (auto it = pass.begin(); it != pass.end(); ++it)
+                if (it->second == recent_list)
+                    Permute(rooms, n_room, res, pass,pass_size, it->first, recent_list - 1);
         }
-    }else if (room.size() == 1) {
-        Permute(rooms, n_room, res, pass, pass[recent_list], recent_list - 1);
+    }else{
+        for (auto it = pass.begin(); it != pass.end(); ++it)
+            if (it->second == recent_list)
+                Permute(rooms, n_room, res, pass, pass_size, it->first, recent_list - 1);
     }
 }
 int main()
@@ -55,9 +54,9 @@ int main()
     for (int i = 0;i < 2 * n - 2;i++) {
         int r1 = old_list[i];
         int r2 = old_list[i + 1];
-        if (!isVectorContain<int>(rooms[r1],r2))
+        if (rooms[r1].empty() || find(rooms[r1].begin(), rooms[r1].end(), r2) == rooms[r1].end())
             rooms[r1].push_back(r2);
-        if (!isVectorContain<int>(rooms[r2], r1))
+        if (rooms[r2].empty() || find(rooms[r2].begin(), rooms[r2].end(), r1) == rooms[r2].end())
             rooms[r2].push_back(r1);
 
     }
@@ -71,7 +70,7 @@ int main()
     }
 
     int res = 0;
-    Permute(rooms, n, res, {}, *old_list, -1);
+    Permute(rooms, n, res, {}, 0, *old_list, -1);
 
     cout << res % 1000000007 << endl;
     return 0;
