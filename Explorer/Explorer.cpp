@@ -34,10 +34,11 @@ void Permute(vector<int>* rooms, int n_room, int& res, vector<int> pass, int foc
             }
         }
         if (isFail)
+        {
             Permute(rooms, n_room, res, pass, pass[recent_list], recent_list - 1);
+        }
     }else if (room.size() == 1) {
-        int foo = distance(pass.begin(), find(pass.begin(), pass.end(), room[0])) - 1;
-        Permute(rooms, n_room, res, pass, room[0], foo);
+        Permute(rooms, n_room, res, pass, pass[recent_list], recent_list - 1);
     }
 }
 int main()
