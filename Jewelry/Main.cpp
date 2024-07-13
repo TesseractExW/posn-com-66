@@ -7,7 +7,7 @@ int main()
 	std::cin >> str;
 
 	unsigned long int sum = 0;
-
+	// O(n^4) :skull:
 	for (int low = 0;low < n;low++) {
 		for (int high = low;high < n;high++) {
 			int max_ = 0;
