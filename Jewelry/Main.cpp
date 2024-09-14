@@ -6,8 +6,8 @@ int main()
 	char* str = new char[n];
 	std::cin >> str;
 
-	unsigned long int sum = 0;
-	// O(n^4) :skull:
+	unsigned long long int sum = 0;
+	// O(n^3) :skull:
 	for (int low = 0;low < n;low++) {
 		for (int high = low;high < n;high++) {
 			int max_ = 0;
